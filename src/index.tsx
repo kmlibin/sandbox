@@ -1,6 +1,9 @@
 import ReactDOM from "react-dom";
 import React, { useState, useEffect, useRef } from "react";
 
+//components
+import CodeEditor from "./components/code-editor";
+
 //libraries
 import * as esbuild from "esbuild-wasm";
 
@@ -37,9 +40,9 @@ const App = () => {
     if (!ref.current) {
       return;
     }
-    
+
     //if you assign a srcdoc prop, it automatically resets the iframe and its contents
-    iframe.current.srcdoc = html;
+    iframe.current.srcDoc = html;
 
     const result = await ref.current.build({
       entryPoints: ["index.js"],
@@ -54,7 +57,6 @@ const App = () => {
 
     //* arg means post to any domain
     iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
-
   };
 
   //taking output of bundling process and putting in a script element
@@ -83,6 +85,7 @@ const App = () => {
 
   return (
     <div>
+      <CodeEditor initialValue="chello" onChange={(value) => setInput(value)} />
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -91,7 +94,13 @@ const App = () => {
         {/* want to run esbuild once this is clicked */}
         <button onClick={onClick}>Submit</button>
       </div>
-      <iframe title="preview" ref={iframe} sandbox="allow-scripts" srcDoc={html} />
+
+      <iframe
+        title="preview"
+        ref={iframe}
+        sandbox="allow-scripts"
+        srcDoc={html}
+      />
     </div>
   );
 };
