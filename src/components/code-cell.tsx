@@ -7,9 +7,9 @@ import bundle from "../bundler";
 //components
 import CodeEditor from "./code-editor";
 import Preview from "./preview";
+import Resizable from "./resizable";
 
-
-const CodeCell= () => {
+const CodeCell = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
 
@@ -20,15 +20,18 @@ const CodeCell= () => {
   };
 
   return (
-    <div>
-      <CodeEditor initialValue="chello" onChange={(value) => setInput(value)} />
-      <div>
-        {/* want to run esbuild once this is clicked */}
-        <button onClick={onClick}>Submit</button>
+    <Resizable direction="vertical">
+      <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
+        <Resizable direction="horizontal">
+          <CodeEditor
+            initialValue="chello"
+            onChange={(value) => setInput(value)}
+          />
+        </Resizable>
+        <Preview code={code} />
       </div>
-      <Preview code={code} />
-    </div>
+    </Resizable>
   );
 };
 
-export default CodeCell
+export default CodeCell;

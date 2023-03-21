@@ -1,5 +1,7 @@
 import { useRef, useEffect } from "react";
 
+import './preview.css'
+
 interface PreviewProps {
   code: string;
 }
@@ -10,7 +12,8 @@ interface PreviewProps {
 //we recieve in iframe, then we execute it. won't have an issue of unescaped script tags
 const html = `
    <html>
-    <head> </head>
+    <head> 
+    <style>html { background-color: white; }</style></head>
     <body>
       <div id="root"></div>
     <script>
@@ -40,12 +43,14 @@ const Preview: React.FC<PreviewProps> = ({ code }) => {
   }, [code]);
 
   return (
+    <div className= "preview-wrapper">
     <iframe
       title="preview"
       ref={iframe}
       sandbox="allow-scripts"
       srcDoc={html}
     />
+    </div>
   );
 };
 
