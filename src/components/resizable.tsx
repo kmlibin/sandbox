@@ -1,4 +1,5 @@
-//ctrl click to see the different types it exports - that is where we find the resizableboxprops types
+//ctrl click to see the different types it exports - that is where we find the resizableboxprops types. when providing width directly, max/min constraints
+//are no longer respected in resizablebox
 import { ResizableBox, ResizableBoxProps } from "react-resizable";
 import { useEffect, useState } from "react";
 import "./resizable.css";
@@ -9,14 +10,18 @@ interface ResizableProps {
 }
 
 const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
+  //width between resizable and resizablebox is jumping, need to synchronize these state changes.
+  const [width, setWidth] = useState(window.innerWidth * 0.75);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-  console.log(children);
 
   let resizableProps: ResizableBoxProps;
 
   //use inner height and width to update our resizable box component. update state, which forces rerender
   useEffect(() => {
+    //goal is allow user to type into code editor, if they stop typing for a second, auto take 
+    //that code bundle and execute it in preview window
+    
     //timer/setTimeOut = debouncing
     let timer: any;
     const listener = () => {
@@ -26,6 +31,9 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       timer = setTimeout(() => {
         setInnerHeight(window.innerHeight);
         setInnerWidth(window.innerWidth);
+        if (window.innerWidth * 0.75 < width) {
+          setWidth(window.innerWidth * 0.75);
+        }
       }, 100);
     };
     window.addEventListener("resize", listener);
@@ -34,16 +42,21 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
     return () => {
       window.removeEventListener("resize", listener);
     };
-  }, []);
+  }, [width]);
 
   if (direction === "horizontal") {
+    //props available on resizable box
     resizableProps = {
       className: "resize-horizontal",
       height: Infinity,
-      width: innerWidth * 0.75,
+      width,
       resizeHandles: ["e"],
       maxConstraints: [innerWidth * 0.75, Infinity],
       minConstraints: [innerWidth * 0.2, Infinity],
+      //called whenever user stops dragging
+      onResizeStop: (event, data) => {
+        setWidth(data.size.width);
+      },
     };
   } else {
     resizableProps = {
