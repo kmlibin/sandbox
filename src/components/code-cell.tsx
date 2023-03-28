@@ -8,12 +8,16 @@ import bundle from "../bundler";
 import CodeEditor from "./code-editor";
 import Preview from "./preview";
 import Resizable from "./resizable";
+import { Cell } from "../state";
+import { useActions } from "../hooks/useActions";
 
-const CodeCell = () => {
-  const [input, setInput] = useState("");
+interface CodeCellProps {
+  cell: Cell;
+}
+const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const [code, setCode] = useState("");
-  const [error, setError] = useState("")
-
+  const [error, setError] = useState("");
+  const { updateCell } = useActions();
   //the bundle step. the transpile func is async, so make sure this is async
 
   //wait for 1 ish seconds without any updates to state, if that happens, we wat to run bundling logic. this is
@@ -23,28 +27,28 @@ const CodeCell = () => {
   //first bundling logic. repeat this process until 1 second goes by without us cancelling the timer, then the bundling happens
 
   useEffect(() => {
-   const timer =  setTimeout(async () => {
-      const output = await bundle(input);
+    const timer = setTimeout(async () => {
+      const output = await bundle(cell.content);
       setCode(output.code);
-      setError(output.err)
+      setError(output.err);
     }, 1000);
 
     //remember, return funcs (cleanup) will run every time useeffect is called. execute logic to cancel previous timer
     return () => {
-        clearTimeout(timer)
-    }
-  }, [input]);
+      clearTimeout(timer);
+    };
+  }, [cell.content]);
 
   return (
     <Resizable direction="vertical">
       <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
         <Resizable direction="horizontal">
           <CodeEditor
-            initialValue="chello"
-            onChange={(value) => setInput(value)}
+            initialValue={cell.content}
+            onChange={(value) => updateCell(cell.id, value)}
           />
         </Resizable>
-        <Preview code={code} bundleStatus={error}/>
+        <Preview code={code} bundleStatus={error} />
       </div>
     </Resizable>
   );
