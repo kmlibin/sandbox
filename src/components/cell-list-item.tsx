@@ -5,7 +5,7 @@ import ActionBar from "./action-bar";
 import CodeCell from "./code-cell";
 import TextEditor from "./text-editor";
 
-import './cell-list-item.css'
+import "./cell-list-item.css";
 
 interface CellListItemProps {
   cell: Cell;
@@ -14,16 +14,25 @@ interface CellListItemProps {
 const CellListItem: React.FC<CellListItemProps> = ({ cell }) => {
   let child: JSX.Element;
   if (cell.type === "code") {
-    child = <CodeCell cell={cell} />;
+    //allows for the UI to have a thick bar around the action buttons, and rendered above with the code cell. 
+    //still rendered "inside" of the text editor
+    child = (
+      <>
+        <div className="action-bar-wrapper">
+          <ActionBar id={cell.id} />
+        </div>
+        <CodeCell cell={cell} />
+      </>
+    );
   } else {
-    child = <TextEditor cell={cell} />;
+    child = (
+      <>
+        <TextEditor cell={cell} />
+        <ActionBar id={cell.id} />
+      </>
+    );
   }
-  return (
-    <div className="cell-list-item">
-      <ActionBar id={cell.id} />
-      {child}
-    </div>
-  );
+  return <div className="cell-list-item">{child}</div>;
 };
 
 export default CellListItem;
