@@ -6,6 +6,8 @@ import CellList from "./components/cell-list";
 
 //libraries
 import "bulmaswatch/superhero/bulmaswatch.min.css";
+//import from node modules
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 
 const App = () => {
