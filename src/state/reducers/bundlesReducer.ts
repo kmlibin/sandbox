@@ -1,6 +1,5 @@
 import { ActionType } from "../action-types";
 import { Action } from "../actions";
-import { Cell } from "../cell";
 
 //import immer
 import produce from "immer";
@@ -10,13 +9,13 @@ interface BundleState {
     loading: boolean;
     code: string;
     err: string;
-  };
+  } | undefined;
 }
 
 const initialState: BundleState = {};
 
 const reducer = produce(
-  (state: BundleState = initialState, action: Action): BundleState => {
+  (state: BundleState = initialState, action: Action): BundleState  => {
     switch (action.type) {
       case ActionType.BUNDLE_START:
         state[action.payload.cellId] = {
