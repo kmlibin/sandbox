@@ -3,7 +3,6 @@ import { Action } from "../actions";
 import { Cell } from "../cell";
 
 //import immer
-
 import produce from "immer";
 
 interface CellsState {
@@ -60,7 +59,7 @@ const reducer = produce((state: CellsState = initialState, action: Action): Cell
       state.order[targetIndex] = action.payload.id;
       return state;
 
-    case ActionType.INSERT_CELL_BEFORE:
+    case ActionType.INSERT_CELL_AFTER:
       //create new cell
       const cell: Cell = {
         content: "",
@@ -73,11 +72,12 @@ const reducer = produce((state: CellsState = initialState, action: Action): Cell
       const foundIndex = state.order.findIndex(
         (id) => id === action.payload.id
       );
-      //if it can't find the index, it returns -1, push it at the end of the list.
+      //if it can't find the index, it returns -1, adds it at the beginning of the list.
       if (foundIndex < 0) {
-        state.order.push(cell.id);
+        state.order.unshift(cell.id);
       } else {
-        state.order.splice(foundIndex, 0, cell.id);
+        //foundindex plus one, adds right after
+        state.order.splice(foundIndex + 1, 0, cell.id);
       }
 
       return state;
