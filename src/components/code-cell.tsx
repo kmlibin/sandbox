@@ -7,43 +7,18 @@ import Resizable from "./resizable";
 import { Cell } from "../state";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/use-typed-selector";
+import { useCumulativeCode } from "../hooks/use-cumulative-code";
 
 import "./code-cell.css";
 
 interface CodeCellProps {
   cell: Cell;
 }
+
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const { updateCell, createBundle } = useActions();
   const bundle = useTypedSelector((state) => state.bundles[cell.id]);
-  //selector to get cumulative code
-  const cumulativeCode = useTypedSelector((state) => {
-    //get data and order
-    //iterate over different cells, return a list of strings (which is the code for current and prev cells)
-    const { data, order } = state.cells;
-    //map over order and return a list of all the diff cells (by id) that we have
-    const orderedCells = order.map((id) => data[id]);
-    const cumulativeCode = [
-      `
-      const show = (value) => {
-        if(typeof value === 'object') {
-          document.querySelector('#root').innerHTML = JSON.stringify(value);
-        } else {
-        document.querySelector('#root').innerHTML = value;
-      }
-    };
-    `];
-    for (let c of orderedCells) {
-      if (c.type === "code") {
-        cumulativeCode.push(c.content);
-      }
-      if (c.id === cell.id) {
-        break;
-      }
-    }
-    return cumulativeCode;
-    
-  });
+  const cumulativeCode = useCumulativeCode(cell.id)
 
   //wait for 1 ish seconds without any updates to state, if that happens, we wat to run bundling logic. this is
   //called debouncing: we want a piece of code to run as much as possible until a certain amount of time passes, then we run some function
@@ -54,12 +29,12 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   useEffect(() => {
     //this is essentially so that first load doesn't take 1 s, and it loads immediately
     if (!bundle) {
-      createBundle(cell.id, cumulativeCode.join('\n'));
+      createBundle(cell.id, cumulativeCode);
       return;
     }
     //this is the debounce logic
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cumulativeCode.join('\n'));
+      createBundle(cell.id, cumulativeCode);
     }, 1000);
 
     //remember, return funcs (cleanup) will run every time useeffect is called. execute logic to cancel previous timer
@@ -67,7 +42,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
       clearTimeout(timer);
     }; //createBundle...only add if declared inside of func or recieved as prop
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cumulativeCode.join('\n'), cell.id, createBundle]);
+  }, [cumulativeCode, cell.id, createBundle]);
 
   return (
     <Resizable direction="vertical">
