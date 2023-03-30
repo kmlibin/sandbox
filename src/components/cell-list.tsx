@@ -4,6 +4,8 @@ import AddCell from "./add-cell";
 
 import CellListItem from "./cell-list-item";
 
+import './cell-list.css'
+
 const CellList: React.FC = () => {
   //selector. comes from our reducers
   const cells = useTypedSelector(({ cells: { order, data } }) => {
@@ -21,7 +23,8 @@ const CellList: React.FC = () => {
   ));
 
   return (
-    <div>
+    <div className="cell-list">
+      {/* //forcevisible so that add cell appears opacity: 1 when there are no renderedcells */}
       <AddCell forceVisible={cells.length === 0} prevCellId={null} />
       {renderedCells}
     </div>

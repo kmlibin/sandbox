@@ -1,0 +1,8 @@
+.cell-list {
+    margin: 0 25px 50vh;
+}
+
+/* fix the snapping that happens when the bottom component gets vertically resized */
+.react-draggable-transparent-selection .cell-list {
+    margin-bottom: 100vh;
+}
