@@ -46,11 +46,12 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   useEffect(() => {
     //this is essentially so that first load doesn't take 1 s, and it loads immediately
     if (!bundle) {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode.join('\n'));
       return;
     }
+    //this is the debounce logic
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode.join('\n'));
     }, 1000);
 
     //remember, return funcs (cleanup) will run every time useeffect is called. execute logic to cancel previous timer
@@ -58,7 +59,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
       clearTimeout(timer);
     }; //createBundle...only add if declared inside of func or recieved as prop
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cell.content, cell.id, createBundle]);
+  }, [cumulativeCode.join('\n'), cell.id, createBundle]);
 
   return (
     <Resizable direction="vertical">
