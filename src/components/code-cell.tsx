@@ -16,6 +16,26 @@ interface CodeCellProps {
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const { updateCell, createBundle } = useActions();
   const bundle = useTypedSelector((state) => state.bundles[cell.id]);
+  //selector to get cumulative code
+  const cumulativeCode = useTypedSelector((state) => {
+    //get data and order
+    //iterate over different cells, return a list of strings (which is the code for current and prev cells)
+    const { data, order } = state.cells;
+    //map over order and return a list of all the diff cells (by id) that we have
+    const orderedCells = order.map((id) => data[id]);
+    const cumulativeCode = [];
+    for (let c of orderedCells) {
+      if (c.type === "code") {
+        cumulativeCode.push(c.content);
+      }
+      if (c.id === cell.id) {
+        break;
+      }
+    }
+    console.log(cumulativeCode)
+    return cumulativeCode;
+    
+  });
 
   //wait for 1 ish seconds without any updates to state, if that happens, we wat to run bundling logic. this is
   //called debouncing: we want a piece of code to run as much as possible until a certain amount of time passes, then we run some function
