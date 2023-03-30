@@ -20,7 +20,7 @@ const bundle = async (rawCode: string) => {
   const env = ["process", "env", "NODE_ENV"].join(".");
 
   try {
-    //this is the result (code), set it to piece of state to pass into preview component
+    //this is the result. set it to variable to pass into preview component
     const result = await service.build({
       entryPoints: ["index.js"],
       bundle: true,
@@ -30,6 +30,8 @@ const bundle = async (rawCode: string) => {
         [env]: '"production"',
         globalName: "window",
       },
+      jsxFactory: '_React.createElement',
+      jsxFragment:'_React.Fragment'
     });
 
     return {
