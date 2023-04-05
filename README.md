@@ -1,3 +1,27 @@
+bulma css
+localforage,
+axios, 
+esbuild
+ts,
+monaco editor
+bulmaswatch
+monaco jsx highligher + jscodeshift ( mjsx can't find it on its own. jscodeshf responsible for parsing the jsx and telling it what to highlight)
+
+react-resizable
+react-md-editor
+
+immer
+
+data persists, be able to quickly and easily share a file...easier if we let user save this information in a file. also launching application
+
+font awesome
+
+lerna cli - tool for managing a multi-package project. easy for us to consume updates between our different modules on our local machine as we are developing
+sets up a link in node modules to the package, takes it directly from the local package, without updating and publishing package, updating package.json , re installing it
+
+commander - helps build out command line interfaces. reading in different commands, reading in different options we might provide.
+
+express
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
